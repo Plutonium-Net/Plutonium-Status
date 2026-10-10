@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plutonium Status</title>
+<meta name="description" content="Live status of Plutonium services, streamed from Stelena." />
+<meta name="color-scheme" content="dark light" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%F0%9F%9F%A2</text></svg>" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<main class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">🟢</span>
+      <h1>Plutonium Status</h1>
+    </div>
+    <div class="top__right">
+      <span id="conn" class="pill pill--connecting" role="status" aria-live="polite">
+        <span class="pill__dot" aria-hidden="true"></span><span id="conn-text">Connecting…</span>
+      </span>
+    </div>
+  </header>
+
+  <section id="sim-banner" class="sim" hidden>
+    <strong>Simulated state</strong>
+    <span id="sim-text"></span>
+  </section>
+
+  <section id="hero" class="hero" data-level="unknown" aria-live="polite">
+    <div class="hero__main">
+      <span id="hero-emoji" class="hero__emoji" aria-hidden="true">⚪</span>
+      <div>
+        <h2 id="hero-label">Waiting for the first check</h2>
+        <p id="hero-note" class="hero__note">Stelena hasn&rsquo;t finished its first pass yet.</p>
+      </div>
+    </div>
+    <div class="hero__countdown">
+      <div class="countdown__value"><span id="countdown">--</span><span class="countdown__unit">s</span></div>
+      <div class="countdown__label">until next refresh</div>
+      <div class="bar" aria-hidden="true"><span id="countdown-bar" class="bar__fill" style="width:0%"></span></div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat stat--up"><span class="stat__num" id="n-up">0</span><span class="stat__label">up</span></div>
+    <div class="stat stat--slow"><span class="stat__num" id="n-slow">0</span><span class="stat__label">slow</span></div>
+    <div class="stat stat--down"><span class="stat__num" id="n-down">0</span><span class="stat__label">down</span></div>
+    <div class="stat"><span class="stat__num" id="n-total">0</span><span class="stat__label">checks</span></div>
+    <div class="stat stat--wide"><span class="stat__num" id="n-checked">—</span><span class="stat__label">last checked</span></div>
+  </section>
+
+  <section id="groups" class="groups"></section>
+
+  <footer class="foot">
+    <p>
+      <span id="foot-source">—</span>
+      <span class="sep">·</span>
+      updates <span id="foot-updated">—</span>
+      <span class="sep">·</span>
+      refreshing every <span id="foot-interval">—</span>
+    </p>
+    <details class="settings">
+      <summary>API settings</summary>
+      <form id="api-form">
+        <label for="api-input">Stelena API base URL</label>
+        <div class="settings__row">
+          <input id="api-input" name="api" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://stelena.example.com" />
+          <button type="submit">Save</button>
+          <button type="button" id="api-reset" class="ghost">Reset</button>
+        </div>
+        <p class="settings__hint" id="api-hint"></p>
+      </form>
+    </details>
+  </footer>
+
+</main>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
