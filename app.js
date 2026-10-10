@@ -21,7 +21,7 @@
   [
     "conn", "conn-text", "sim-banner", "sim-text", "hero", "hero-label",
     "hero-note", "countdown", "countdown-bar", "n-up", "n-slow", "n-down", "n-total",
-    "n-checked", "groups", "foot-source", "foot-updated", "foot-interval",
+    "n-checked", "filters", "groups", "foot-source", "foot-updated", "foot-interval",
   ].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -29,6 +29,7 @@
   var state = {
     api: resolveApi(),
     snapshot: null,
+    filter: "all",
     offset: 0,
     mode: "connecting",
     socket: null,
@@ -271,11 +272,19 @@
     el["foot-updated"].textContent = formatAgo(snap.updatedAt);
     el["foot-interval"].textContent = formatInterval(snap.checkSeconds);
 
-    el.groups.innerHTML = renderGroups(snap.targets || []);
+    var groups = groupTargets(snap.targets || []);
+    var names = groups.map(function (g) { return g.name; });
+    // A type can vanish between passes; fall back to showing everything.
+    if (state.filter !== "all" && names.indexOf(state.filter) === -1) state.filter = "all";
+    renderFilters(groups);
+    var visible = state.filter === "all" ? groups : groups.filter(function (g) {
+      return g.name === state.filter;
+    });
+    el.groups.innerHTML = renderGroups(visible);
     renderCountdown();
   }
 
-  function renderGroups(targets) {
+  function groupTargets(targets) {
     var order = [];
     var byGroup = new Map();
     targets.forEach(function (target) {
@@ -286,14 +295,38 @@
       }
       byGroup.get(name).push(target);
     });
-
     return order.map(function (name) {
-      var list = byGroup.get(name);
+      return { name: name, list: byGroup.get(name) };
+    });
+  }
+
+  function renderFilters(groups) {
+    if (!groups.length) {
+      el.filters.hidden = true;
+      el.filters.innerHTML = "";
+      return;
+    }
+    el.filters.hidden = false;
+    var total = groups.reduce(function (n, g) { return n + g.list.length; }, 0);
+    var chips = [{ name: "all", label: "All types", count: total }].concat(
+      groups.map(function (g) { return { name: g.name, label: g.name, count: g.list.length }; })
+    );
+    el.filters.innerHTML = chips.map(function (chip) {
+      var on = state.filter === chip.name;
+      return '<button type="button" class="chip' + (on ? " chip--on" : "") +
+        '" data-filter="' + escapeHtml(chip.name) + '" aria-pressed="' + on + '">' +
+        escapeHtml(chip.label) + '<span class="chip__n">' + chip.count + "</span></button>";
+    }).join("");
+  }
+
+  function renderGroups(groups) {
+    return groups.map(function (group) {
+      var list = group.list;
       var failing = list.filter(function (t) { return t.status !== "up"; }).length;
       var head = list.length + " checks";
       if (failing > 0) head = (list.length - failing) + "/" + list.length + " up";
       var rows = list.map(renderTarget).join("");
-      return '<section class="group"><h3><span>' + escapeHtml(name) + "</span><em>" +
+      return '<section class="group"><h3><span>' + escapeHtml(group.name) + "</span><em>" +
         escapeHtml(head) + "</em></h3><ul>" + rows + "</ul></section>";
     }).join("");
   }
@@ -315,6 +348,15 @@
       uptime +
       "</li>";
   }
+
+  // ---- Filters -------------------------------------------------------------
+
+  el.filters.addEventListener("click", function (event) {
+    var button = event.target && event.target.closest ? event.target.closest("button[data-filter]") : null;
+    if (!button) return;
+    state.filter = button.getAttribute("data-filter");
+    render();
+  });
 
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible" && !state.socket && !state.pollTimer) {

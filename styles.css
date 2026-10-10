@@ -115,6 +115,21 @@ body {
 .stat--down .stat__num { color: var(--down); }
 .stat--wide .stat__num { font-size: 15px; }
 
+/* Filters ----------------------------------------------------------------- */
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-pill);
+  background: transparent; color: var(--muted);
+  font: inherit; font-size: 12px; cursor: pointer;
+}
+.chip:hover { border-color: var(--line-strong); color: var(--text); }
+.chip--on { border-color: var(--line-strong); background: var(--panel-2); color: var(--text); }
+.chip:focus-visible { outline: 1px solid var(--line-strong); outline-offset: 2px; }
+.chip__n { color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip--on .chip__n { color: var(--text); }
+
 /* Groups ------------------------------------------------------------------ */
 
 .groups { display: grid; gap: 16px; }
