@@ -7,7 +7,7 @@
  *   window.STELENA_API = "https://stelena.example.com";
  *
  * Leave it empty to use the built-in default. Visitors can also override it at
- * runtime with ?api=https://host (saved to localStorage) or the in-page
- * settings box, which is handy when you host the page somewhere else.
+ * runtime with ?api=https://host, which is handy when you host the page
+ * somewhere else.
  */
 window.STELENA_API = "";

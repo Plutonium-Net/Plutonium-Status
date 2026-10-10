@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Plutonium Status</title>
 <meta name="description" content="Live status of Plutonium services, streamed from Stelena." />
-<meta name="color-scheme" content="dark light" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%F0%9F%9F%A2</text></svg>" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" type="image/png" href="logo.png" />
+<link rel="apple-touch-icon" href="logo.png" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -14,7 +15,7 @@
 
   <header class="top">
     <div class="brand">
-      <span class="brand__mark" aria-hidden="true">🟢</span>
+      <img class="brand__mark" src="logo.png" alt="" width="26" height="26" />
       <h1>Plutonium Status</h1>
     </div>
     <div class="top__right">
@@ -31,7 +32,6 @@
 
   <section id="hero" class="hero" data-level="unknown" aria-live="polite">
     <div class="hero__main">
-      <span id="hero-emoji" class="hero__emoji" aria-hidden="true">⚪</span>
       <div>
         <h2 id="hero-label">Waiting for the first check</h2>
         <p id="hero-note" class="hero__note">Stelena hasn&rsquo;t finished its first pass yet.</p>
@@ -62,18 +62,6 @@
       <span class="sep">·</span>
       refreshing every <span id="foot-interval">—</span>
     </p>
-    <details class="settings">
-      <summary>API settings</summary>
-      <form id="api-form">
-        <label for="api-input">Stelena API base URL</label>
-        <div class="settings__row">
-          <input id="api-input" name="api" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://stelena.example.com" />
-          <button type="submit">Save</button>
-          <button type="button" id="api-reset" class="ghost">Reset</button>
-        </div>
-        <p class="settings__hint" id="api-hint"></p>
-      </form>
-    </details>
   </footer>
 
 </main>

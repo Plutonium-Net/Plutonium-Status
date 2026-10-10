@@ -19,10 +19,9 @@
 
   var el = {};
   [
-    "conn", "conn-text", "sim-banner", "sim-text", "hero", "hero-emoji", "hero-label",
+    "conn", "conn-text", "sim-banner", "sim-text", "hero", "hero-label",
     "hero-note", "countdown", "countdown-bar", "n-up", "n-slow", "n-down", "n-total",
     "n-checked", "groups", "foot-source", "foot-updated", "foot-interval",
-    "api-form", "api-input", "api-reset", "api-hint",
   ].forEach(function (id) {
     el[id] = document.getElementById(id);
   });
@@ -54,17 +53,6 @@
     var fromStore = null;
     try { fromStore = localStorage.getItem(STORAGE_KEY); } catch (_) { /* private mode */ }
     return normalizeApi(fromQuery || fromStore || window.STELENA_API || DEFAULT_API);
-  }
-
-  function persistApi(value) {
-    try {
-      if (value) localStorage.setItem(STORAGE_KEY, value);
-      else localStorage.removeItem(STORAGE_KEY);
-    } catch (_) { /* ignore */ }
-  }
-
-  function apiHint(message) {
-    el["api-hint"].textContent = message;
   }
 
   // ---- Connection ----------------------------------------------------------
@@ -260,7 +248,6 @@
 
     var level = levelClass(snap.level);
     el.hero.dataset.level = level;
-    el["hero-emoji"].textContent = snap.emoji || "⚪";
     el["hero-label"].textContent = snap.label || snap.level;
     el["hero-note"].textContent = snap.note || "";
 
@@ -329,31 +316,6 @@
       "</li>";
   }
 
-  // ---- Settings ------------------------------------------------------------
-
-  el["api-form"].addEventListener("submit", function (event) {
-    event.preventDefault();
-    var value = el["api-input"].value.trim();
-    if (!value) return;
-    var next = normalizeApi(value);
-    persistApi(next);
-    state.api = next;
-    apiHint("Saved. Connecting to " + next + "…");
-    state.snapshot = null;
-    state.retries = 0;
-    connect();
-  });
-
-  el["api-reset"].addEventListener("click", function () {
-    persistApi(null);
-    state.api = resolveApi();
-    el["api-input"].value = state.api;
-    apiHint("Reset to " + state.api);
-    state.snapshot = null;
-    state.retries = 0;
-    connect();
-  });
-
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible" && !state.socket && !state.pollTimer) {
       state.retries = 0;
@@ -363,8 +325,6 @@
 
   // ---- Boot ----------------------------------------------------------------
 
-  el["api-input"].value = state.api;
-  apiHint("Reading from " + state.api);
   state.tickTimer = setInterval(function () {
     renderCountdown();
     if (state.snapshot) {
